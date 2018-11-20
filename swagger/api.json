@@ -1,0 +1,1408 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Web simulator of the EnergieIP infrastructure",
+        "termsOfService": "/tos",
+        "title": "Simulator API",
+        "version": "0.0.1"
+    },
+    "basePath": "/v1",
+    "definitions": {
+        "Rule": {
+            "required" : [
+                "property",
+                "value"
+            ],
+            "properties": {
+                "property": {
+                    "type" : "string",
+                    "description": "rule name"
+                },
+                "value": {
+                    "type" : "integer",
+                    "description": "value"
+                }
+            }
+        },
+        "Event": {
+            "required" : [
+                "date",
+                "content"
+            ],
+            "properties": {
+                "date": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "Event date since epoch in Seconds"
+                },
+                "content": {
+                    "type" : "string",
+                    "description": "event description"
+                }
+            }
+        },
+        "Config": {
+            "required" : [
+                "groups"
+            ],
+            "properties": {
+                "groups": {
+                    "items": {
+                        "$ref": "#/definitions/Group"
+                    },
+                    "type": "array"
+                }
+            }
+        },
+        "Led": {
+            "required" : [
+                "mac"
+            ],
+            "properties": {
+                "mac": {
+                    "type": "string",
+                    "description": "mac address"
+                },
+                "group": {
+                    "type": "integer",
+                    "description": "Registered group number"
+                },
+                "defaultBrightness": {
+                    "type": "integer",
+                    "description": "Default brightness value when the witch is not responding (in percentage)"
+                },
+                "isConfigured": {
+                    "type": "boolean",
+                    "description": "Is configured driver"
+                },
+                "duration": {
+                    "type": "integer",
+                    "description": "Brightness duration in hours"
+                },
+                "version": {
+                    "type": "integer",
+                    "description": "Driver led software version"
+                },
+                "brightness": {
+                    "type": "integer",
+                    "description": "Brightness in percentage"
+                },
+                "watchdog": {
+                    "type": "integer",
+                    "description": "Brightness duration in hours (in Seconds)"
+                },
+                "iMax": {
+                    "type": "integer",
+                    "description": "Intensity maximum in mA"
+                },
+                "isBleEnabled": {
+                    "type": "boolean",
+                    "description": "Bluetooth activation status"
+                },
+                "thresoldLow": {
+                    "type": "integer",
+                    "description": "Low limit for led brightness in percentage"
+                },
+                "thresoldHigh": {
+                    "type": "integer",
+                    "description": "High limit for led brightness in percentage"
+                },
+                "isDaisyChainEnabled": {
+                    "type": "boolean",
+                    "description": "Is driver daisy chained"
+                },
+                "daisyChainPosition": {
+                    "type": "integer",
+                    "description": "Driver position in the daisy chain"
+                },
+                "devicePower": {
+                    "type": "integer",
+                    "description": "Device power in Watts"
+                },
+                "energy": {
+                    "type": "integer",
+                    "description": "Cumulative energy consumption in Wh"
+                },
+                "voltageLed": {
+                    "type": "integer",
+                    "description": "Led volage in Volts"
+                },
+                "voltageInput": {
+                    "type": "integer",
+                    "description": "Input voltage in Volts"
+                },
+                "temperature": {
+                    "type": "integer",
+                    "description": "On board sensor 1/0°C (in Celsius)"
+                },
+                "linePower": {
+                    "type": "integer",
+                    "description": "Power line in Watts"
+                },
+                "timeToAuto": {
+                    "type": "integer",
+                    "description": "In manual mode: remaining time before switch back to auto mode"
+                },
+                "auto": {
+                    "type": "boolean",
+                    "description": "Mode auto/manual"
+                },
+                "resetNumbers": {
+                    "type": "integer",
+                    "description": "Reset numbers since the initial setup"
+                },
+                "initialSetupDate": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "First plug date since epoch in Seconds"
+                },
+                "lastResetDate": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "last reset date since epoch in Seconds"
+                },
+                "error": {
+                    "type": "integer",
+                    "description": "Error status: 0 means no error"
+                }
+            },
+            "type": "object"
+        },
+        "Sensor": {
+            "required" : [
+                "mac"
+            ],
+            "properties": {
+                "mac": {
+                    "type": "string",
+                    "description": "mac address"
+                },
+                "group":{
+                    "type": "integer",
+                    "description": "Registered group number"
+                },
+                "isConfigured": {
+                    "type": "boolean",
+                    "description": "Is configured driver"
+                },
+                "presence": {
+                    "type": "boolean",
+                    "description": "Set to true when a movment is detected. Will be switched back to false after thresold_presence duration"
+                },
+                "temperatureOffset": {
+                    "type": "integer",
+                    "description": "temperature correction value in celsius"
+                },
+                "temperature": {
+                    "type": "integer",
+                    "description": "temperature value in celsius"
+                },
+                "temperatureRaw": {
+                    "type": "integer",
+                    "description": "Raw temperature value in celsius"
+                },
+                "brightness": {
+                    "type": "integer",
+                    "description": "Corrected brightness value in lux"
+                },
+                "brightnessCorrectionFactor": {
+                    "type": "integer",
+                    "description": "Corrected brightness corrector factor in lux"
+                },
+                "version": {
+                    "type": "integer",
+                    "description": "Driver Software version"
+                },
+                "thresoldPresence": {
+                    "type": "integer",
+                    "description": "Duration when the presence flag is set to true before witching back to false in Seconds"
+                },
+                "brightnessRaw": {
+                    "type": "integer",
+                    "description": "Raw brightness value in lux"
+                },
+                "lastMovment": {
+                    "type": "integer",
+                    "description": "Duration since the last Movment in Seconds"
+                },
+                "voltageInput": {
+                    "type": "integer",
+                    "description": "Input voltage value in Volts"
+                },
+                "isBleEnabled": {
+                    "type": "boolean",
+                    "description": "Bluetooth activation status"
+                },
+                "resetNumbers": {
+                    "type": "integer",
+                    "description": "Reset numbers since the initial setup"
+                },
+                "initialSetupDate": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "First plug date since epoch in Seconds"
+                },
+                "lastResetDate": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "last reset date since epoch in Seconds"
+                },
+                "error": {
+                    "type": "integer",
+                    "description": "last reset date since epoch in Seconds"
+                }
+            },
+            "type": "object"
+        },
+        "Blind": {
+            "required" : [
+                "mac"
+            ],
+            "properties": {
+                "mac": {
+                    "type": "string",
+                    "description": "mac address"
+                },
+                "version": {
+                    "type": "integer",
+                    "description": "Driver blind software version"
+                },
+                "group":{
+                    "type": "integer",
+                    "description": "Registered group number"
+                },
+                "watchdog": {
+                    "type": "integer",
+                    "description": "Brightness duration in hours (in Seconds)"
+                },
+                "isConfigured": {
+                    "type": "boolean",
+                    "description": "Is configured driver"
+                },
+                "isDaisyChainEnabled": {
+                    "type": "boolean",
+                    "description": "is Daisy chained driver"
+                },
+                "daisyChainPosition": {
+                    "type": "integer",
+                    "description": "Daisy Chain postion"
+                },
+                "temperature": {
+                    "type": "integer",
+                    "description": "On board sensor (in Celsius)"
+                },
+                "blind1Manual": {
+                    "type": "integer",
+                    "description": "In manual mode only: 0: stop, 1: Openning, 2: Closing"
+                },
+                "blind2Manual": {
+                    "type": "integer",
+                    "description": "In manual mode only: 0: stop, 1: Openning, 2: Closing"
+                },
+                "blind1": {
+                    "type": "integer",
+                    "description": "In automatic mode only: 0: stop, 1: Openning, 2: Closing"
+                },
+                "blind2": {
+                    "type": "integer",
+                    "description": "In automatic mode only: 0: stop, 1: Openning, 2: Closing"
+                },
+                "fin1Manual": {
+                    "type": "string",
+                    "description": "In manual mode only: [0,+45,-45,+90,-90]"
+                },
+                "fin2Manual": {
+                    "type": "string",
+                    "description": "In manual mode only: [0,+45,-45,+90,-90]"
+                },
+                "windowsStatus": {
+                    "type": "boolean",
+                    "description": "Open/Close"
+                },
+                "voltageInput": {
+                    "type": "integer",
+                    "description": "Input voltage value in Volts"
+                },
+                "isBleEnabled": {
+                    "type": "boolean",
+                    "description": "Bluetooth activation status"
+                },
+                "resetNumbers": {
+                    "type": "integer",
+                    "description": "Reset numbers since the initial setup"
+                },
+                "initialSetupDate": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "First plug date since epoch in Seconds"
+                },
+                "lastResetDate": {
+                    "type": "number",
+                    "format": "float",
+                    "description": "last reset date since epoch in Seconds"
+                },
+                "timeToAuto": {
+                    "type": "integer",
+                    "description": "Remaining time before switching back in automatic mode"
+                },
+                "auto": {
+                    "type": "boolean",
+                    "description": "Automatic mode status . Automatic mode means manage by the group. Manual means manage by the enduser"
+                },
+                "error": {
+                    "type": "integer",
+                    "description": "last reset date since epoch in Seconds"
+                }
+            },
+            "type": "object"
+        },
+        "Group": {
+            "required" :
+                [
+                    "group"
+                ],
+            "properties": {
+                "slopeStart": {
+                    "type": "integer",
+                    "description": "Slope before increasing/decreasing brightness"
+                },
+                "slopeStop": {
+                    "type": "integer",
+                    "description": "Slope after increasing/decreasing brightness"
+                },
+                "group": {
+                    "type": "integer",
+                    "description": "Group number"
+                },
+                "timeToAuto": {
+                    "type": "integer",
+                    "description": "Remaining time before switching back in automatic mode"
+                },
+                "auto": {
+                    "type": "boolean",
+                    "description": "Automatic mode status . Automatic mode means manage by the group. Manual means manage by the enduser"
+                },
+                "watchdog": {
+                    "type": "integer",
+                    "description": "Brightness duration in hours (in Seconds)"
+                },
+                "leds": {
+                    "items": {
+                        "$ref": "#/definitions/Led"
+                    },
+                    "type": "array"
+                },
+                "sensors": {
+                    "items": {
+                        "$ref": "#/definitions/Sensor"
+                    },
+                    "type": "array"
+                },
+                "blinds": {
+                    "items": {
+                        "$ref": "#/definitions/Blind"
+                    },
+                    "type": "array"
+                },
+                "rules": {
+                    "type": "object",
+                    "properties": {
+                        "temperature": {
+                            "type" : "integer",
+                            "description": "Desired temperature value in Celsius"
+                        },
+                        "brightness": {
+                            "type" : "integer",
+                            "description": "Desired brightness value in Lux"
+                        },
+                        "presence": {
+                            "type": "integer",
+                            "description": "Time before considering the room as empty"
+                        }
+                    }
+                }
+            },
+            "type": "object"
+        },
+        "Error" : {
+            "type": "object",
+            "properties": {
+                "Message": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "paths": {
+        "/debug/sensor/brightnessRaw": {
+            "post": {
+                "description": "Debug API force brightness raw detection value",
+                "operationId": "debug_sensor_brightness",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Set brightness fake value on a given sensor",
+                        "required": true,
+                        "schema" :{
+                            "type": "object",
+                            "required" : [
+                                "mac"
+                            ],
+                            "properties" :{
+                                "mac": {
+                                    "type" : "string",
+                                    "description": "sensor mac address"
+                                },
+                                "brightness": {
+                                    "type" : "integer",
+                                    "description": "Brightness measure for the sensor in Lux"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Sensor",
+                        "schema": {
+                            "$ref": "#/definitions/Sensor"
+                        }
+                    },
+                    "400": {
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        },
+                        "description": "Error detail"
+                    }
+                }
+            }
+        },
+        "/debug/sensor/presence": {
+            "post": {
+                "description": "Debug API force presence detection value",
+                "operationId": "debug_sensor_presence",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Set presence fake value on a given sensor",
+                        "required": true,
+                        "schema" :{
+                            "type": "object",
+                            "required" : [
+                                "mac",
+                                "presence"
+                            ],
+                            "properties" :{
+                                "mac": {
+                                    "type" : "string",
+                                    "description": "sensor mac address"
+                                },
+                                "presence": {
+                                    "type" : "boolean",
+                                    "description": "Presence detection"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Sensor",
+                        "schema": {
+                            "$ref": "#/definitions/Sensor"
+                        }
+                    },
+                    "400": {
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        },
+                        "description": "Error detail"
+                    }
+                }
+            }
+        },
+        "/debug/sensor/temperatureRaw": {
+            "post": {
+                "description": "Debug API force temperature raw detection value",
+                "operationId": "debug_sensor_temperature",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Set temperature fake value on a given sensor",
+                        "required": true,
+                        "schema" :{
+                            "type": "object",
+                            "required" : [
+                                "mac"
+                            ],
+                            "properties" :{
+                                "mac": {
+                                    "type" : "string",
+                                    "description": "sensor mac address"
+                                },
+                                "temperature": {
+                                    "type" : "integer",
+                                    "description": "Temperature measure for the sensor in 1/10 celsius"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Sensor",
+                        "schema": {
+                            "$ref": "#/definitions/Sensor"
+                        }
+                    },
+                    "400": {
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        },
+                        "description": "Error detail"
+                    }
+                }
+            }
+        },
+        "/led/new": {
+            "post": {
+                "description": "Add new Led driver",
+                "operationId": "new_led",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Led",
+                        "schema": {
+                            "$ref": "#/definitions/Led"
+                        }
+                    }
+                }
+            }
+        },
+        "/led/switchMode": {
+            "post": {
+                "description": "Switch a Led driver in auto/manual mode",
+                "operationId": "switch_mode_led",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The LED driver",
+                        "required": true,
+                        "schema" :{
+                            "type": "object",
+                            "required" : [
+                                "mac",
+                                "auto"
+                            ],
+                            "properties" :{
+                                "mac": {
+                                    "type" : "string",
+                                    "description": "Driver mac address"
+                                },
+                                "auto": {
+                                    "type" : "boolean",
+                                    "description": "Driver mode: true means automatic false means manual"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Led mode switched"
+                    },
+                    "400": {
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        },
+                        "description": "Error detail"
+                    }
+                }
+            }
+        },
+        "/led/brightness": {
+            "post": {
+                "description": "Change Led brigthness (only work in manual mode)",
+                "operationId": "led_brightness",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The driver led",
+                        "required": true,
+                        "schema" :{
+                            "type": "object",
+                            "required" : [
+                                "mac",
+                                "setpoint"
+                            ],
+                            "properties" :{
+                                "mac": {
+                                    "type" : "string",
+                                    "description": "Led mac address"
+                                },
+                                "setpoint": {
+                                    "type" : "integer",
+                                    "description": "Brightness value in percentage"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Request send to the led"
+                    },
+                    "400": {
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        },
+                        "description": "Error detail"
+                    }
+                }
+            }
+        },
+        "/sensor/new": {
+            "post": {
+                "description": "Add new sensor driver",
+                "operationId": "new_sensor",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Sensor",
+                        "schema": {
+                            "$ref": "#/definitions/Sensor"
+                        }
+                    }
+                }
+            }
+        },
+        "/blind/new": {
+            "post": {
+                "description": "Add new blind driver",
+                "operationId": "new_blind",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Blind",
+                        "schema": {
+                            "$ref": "#/definitions/Blind"
+                        }
+                    }
+                }
+            }
+        },
+        "/blind/switchMode": {
+            "post": {
+                "description": "Switch a Blind driver in auto/manual mode",
+                "operationId": "switch_mode_blind",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "The driver blind",
+                        "required": true,
+                        "schema" :{
+                            "type": "object",
+                            "required" : [
+                                "mac",
+                                "auto"
+                            ],
+                            "properties" :{
+                                "mac": {
+                                    "type" : "string",
+                                    "description": "Driver mac address"
+                                },
+                                "auto": {
+                                    "type" : "boolean",
+                                    "description": "Driver mode: true means automatic false means manual"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Blind mode switched"
+                    },
+                    "400": {
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        },
+                        "description": "Error detail"
+                    }
+                }
+            }
+        },
+        "/blind/position": {
+            "post": {
+                "description": "Update blind position (only in manual mode)",
+                "operationId": "blind_position",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Set blind position",
+                        "required": true,
+                        "schema" :{
+                            "type": "object",
+                            "required" : [
+                                "mac",
+                                "position"
+                            ],
+                            "properties" :{
+                                "mac": {
+                                    "type" : "string",
+                                    "description": "blind mac address"
+                                },
+                                "position": {
+                                    "type" : "integer",
+                                    "description": "0: stop, 1: Openning, 2: Closing"
+                                },
+                                "blindNumber": {
+                                    "type" : "integer",
+                                    "description": "0: all, 1: only blind 1, 2: only blind2; By default: ALL"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Sensor",
+                        "schema": {
+                            "$ref": "#/definitions/Sensor"
+                        }
+                    },
+                    "400": {
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        },
+                        "description": "Error detail"
+                    }
+                }
+            }
+        },
+        "/blind/fin": {
+            "post": {
+                "description": "Update fins position (only in manual mode)",
+                "operationId": "blind_fin",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Set blind position",
+                        "required": true,
+                        "schema" :{
+                            "type": "object",
+                            "required" : [
+                                "mac",
+                                "fin"
+                            ],
+                            "properties" :{
+                                "mac": {
+                                    "type" : "string",
+                                    "description": "blind mac address"
+                                },
+                                "fin": {
+                                    "type" : "string",
+                                    "description": "Fin orientation [0,+45,-45,+90,-90]"
+                                },
+                                "blindNumber": {
+                                    "type" : "integer",
+                                    "description": "0: all, 1: only blind 1, 2: only blind2; By default: ALL"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The Sensor",
+                        "schema": {
+                            "$ref": "#/definitions/Sensor"
+                        }
+                    },
+                    "400": {
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        },
+                        "description": "Error detail"
+                    }
+                }
+            }
+        },
+        "/group/new": {
+            "post": {
+                "description": "Create a group",
+                "operationId": "new_group",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Create the given group",
+                        "required": true,
+                        "schema" :{
+                            "type": "object",
+                            "required": [
+                                "group"
+                            ],
+                            "properties" :{
+                                "group": {
+                                    "type" : "integer",
+                                    "description": "group must be greater than 1"
+                                },
+                                "leds": {
+                                    "type" : "array",
+                                    "description": "array of leds mac addresses",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                },
+                                "sensors": {
+                                    "type" : "array",
+                                    "description": "array of sensors mac addresses",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                },
+                                "blinds": {
+                                    "type" : "array",
+                                    "description": "array of blinds mac addresses",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                },
+                                "temperature": {
+                                    "type": "integer",
+                                    "description": "Temperature when the room is not empty in celsius (1/10 °C), default: 200"
+                                },
+                                "brightness": {
+                                    "type": "integer",
+                                    "description": "Brightness when the room is not empty in Lux, default: 300 Lux"
+                                },
+                                "presence": {
+                                    "type": "integer",
+                                    "description": "Time after last movment before considering the room as empty in Seconds, default 600"
+                                }
+                            }
+                        }
+                    }
+
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The group description",
+                        "schema": {
+                            "$ref": "#/definitions/Group"
+                        }
+                    },
+                    "400": {
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        },
+                        "description": "Error detail"
+                    }
+                }
+            }
+        },
+        "/group/add": {
+            "post": {
+                "description": "Add a driver in a given group",
+                "operationId": "add_group",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Add a driver in a given group",
+                        "required": true,
+                        "schema" :{
+                            "type": "object",
+                            "required" : [
+                                "group",
+                                "mac"
+                            ],
+                            "properties" :{
+                                "mac": {
+                                    "type" : "string",
+                                    "description": "Driver mac address"
+                                },
+                                "group": {
+                                    "type" : "integer",
+                                    "description": "Group number"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The group description",
+                        "schema": {
+                            "$ref": "#/definitions/Group"
+                        }
+                    },
+                    "400": {
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        },
+                        "description": "Error detail"
+                    }
+                }
+            }
+        },
+        "/group/blindPosition": {
+            "post": {
+                "description": "Set the same position value for all the blind in a given group (only when the group is in manual mode)",
+                "operationId": "set_group_blind_position",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Add a driver in a given group",
+                        "required": true,
+                        "schema" :{
+                            "type": "object",
+                            "required" : [
+                                "group",
+                                "position"
+                            ],
+                            "properties" :{
+                                "position": {
+                                    "type" : "integer",
+                                    "description": "0: stop, 1: Openning, 2: Closing"
+                                },
+                                "group": {
+                                    "type" : "integer",
+                                    "description": "Group number"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The group description",
+                        "schema": {
+                            "$ref": "#/definitions/Group"
+                        }
+                    },
+                    "400": {
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        },
+                        "description": "Error detail"
+                    }
+                }
+            }
+        },
+        "/group/switchMode": {
+            "post": {
+                "description": "Switch group mode",
+                "operationId": "switch_mode_group",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Add a driver in a given group",
+                        "required": true,
+                        "schema" :{
+                            "type": "object",
+                            "required" : [
+                                "group",
+                                "auto"
+                            ],
+                            "properties" :{
+                                "auto": {
+                                    "type" : "boolean",
+                                    "description": "Auto: true Manual: False"
+                                },
+                                "group": {
+                                    "type" : "integer",
+                                    "description": "Group number"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The group description",
+                        "schema": {
+                            "$ref": "#/definitions/Group"
+                        }
+                    },
+                    "400": {
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        },
+                        "description": "Error detail"
+                    }
+                }
+            }
+        },
+        "/group/setpoint": {
+            "post": {
+                "description": "Set the same setpoint value for all the LED in a given group (only when the group is in manual mode)",
+                "operationId": "group_led_setpoint",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Add a driver in a given group",
+                        "required": true,
+                        "schema" :{
+                            "type": "object",
+                            "required" : [
+                                "group",
+                                "setpoint"
+                            ],
+                            "properties" :{
+                                "setpoint": {
+                                    "type" : "integer",
+                                    "description": "Setpoint value in percentage"
+                                },
+                                "group": {
+                                    "type" : "integer",
+                                    "description": "Group number"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The group description",
+                        "schema": {
+                            "$ref": "#/definitions/Group"
+                        }
+                    },
+                    "400": {
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        },
+                        "description": "Error detail"
+                    }
+                }
+            }
+        },
+        "/group/rules/brightness": {
+            "post": {
+                "description": "Create a group rule for brightness",
+                "operationId": "group_brightness",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Set brightness group for the given group",
+                        "required": true,
+                        "schema" :{
+                            "type": "object",
+                            "required" : [
+                                "group"
+                            ],
+                            "properties" :{
+                                "group": {
+                                    "type" : "integer",
+                                    "description": "Group number"
+                                },
+                                "brightness": {
+                                    "type" : "integer",
+                                    "description": "Brightness rule for the group in Lux"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The group description",
+                        "schema": {
+                            "$ref": "#/definitions/Group"
+                        }
+                    },
+                    "400": {
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        },
+                        "description": "Error detail"
+                    }
+                }
+            }
+        },
+        "/group/rules/temperature": {
+            "post": {
+                "description": "Create a group rule for temperature",
+                "operationId": "group_temperature",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Set temperature group for the given group",
+                        "required": true,
+                        "schema" :{
+                            "type": "object",
+                            "required" : [
+                                "group"
+                            ],
+                            "properties" :{
+                                "group": {
+                                    "type" : "integer",
+                                    "description": "Group number"
+                                },
+                                "temperature": {
+                                    "type" : "integer",
+                                    "description": "Temperature rule for the group in Celsius (1/10°C)"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The group description",
+                        "schema": {
+                            "$ref": "#/definitions/Group"
+                        }
+                    },
+                    "400": {
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        },
+                        "description": "Error detail"
+                    }
+                }
+            }
+        },
+        "/group/rules/presence": {
+            "post": {
+                "description": "Create a group rule for presence",
+                "operationId": "group_presence",
+                "consumes": [
+                    "application/json"
+                ],
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "Set presence duration group for the given group",
+                        "required": true,
+                        "schema" :{
+                            "type": "object",
+                            "required" : [
+                                "group"
+                            ],
+                            "properties" :{
+                                "group": {
+                                    "type" : "integer",
+                                    "description": "Group number"
+                                },
+                                "presence": {
+                                    "type" : "integer",
+                                    "description": "Presence rule for the group in Seconds"
+                                }
+                            }
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The group description",
+                        "schema": {
+                            "$ref": "#/definitions/Group"
+                        }
+                    },
+                    "400": {
+                        "schema": {
+                            "$ref": "#/definitions/Error"
+                        },
+                        "description": "Error detail"
+                    }
+                }
+            }
+        },
+        "/switch": {
+            "get": {
+                "description": "List connected drivers and groups",
+                "operationId": "list_drivers",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List all drivers and groups",
+                        "schema" :{
+                            "type": "object",
+                            "required" : [
+                                "leds",
+                                "sensors",
+                                "blinds"
+                            ],
+                            "properties": {
+                                "leds": {
+                                    "items": {
+                                        "$ref": "#/definitions/Led"
+                                    },
+                                    "type": "array"
+                                },
+                                "sensors":{
+                                    "items": {
+                                        "$ref": "#/definitions/Sensor"
+                                    },
+                                    "type": "array"
+                                },
+                                "blinds":{
+                                    "items": {
+                                        "$ref": "#/definitions/Blind"
+                                    },
+                                    "type": "array"
+                                },
+                                "groups":{
+                                    "items": {
+                                        "$ref": "#/definitions/Group"
+                                    },
+                                    "type": "array"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/switch/diagnostic": {
+            "get": {
+                "description": "Generate Diagnostic",
+                "operationId": "generate_diagnostic",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Diagnostic",
+                        "schema" :{
+                            "type": "object",
+                            "required" : [
+                                "config",
+                                "events"
+                            ],
+                            "properties": {
+                                "config": {
+                                    "$ref": "#/definitions/Config"
+                                },
+                                "events":{
+                                    "items": {
+                                        "$ref": "#/definitions/Event"
+                                    },
+                                    "type": "array"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
