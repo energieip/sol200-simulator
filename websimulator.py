@@ -34,10 +34,13 @@ def main():
                         help="Broker ip address by default 127.0.0.1")
     parser.add_argument("-p", "--port",  type=str, default="80",
                         help="web port by default 80")
+    parser.add_argument("-s", "--https",  dest='https', action='store_true',
+                        help="allow https by default False")
     args = parser.parse_args()
     logger.info("Broker address is %r", args.broker)
     broker_address = args.broker
     port = args.port
+    https = args.https
 
     logger.info("EnergieIP Simulator")
 
@@ -455,7 +458,10 @@ def main():
         diag = switch.get_diagnostic()
         return jsonify(config=diag["config"], events=diag['events']), HTTPStatus.OK
 
-    app.run(host="0.0.0.0", port=port)
+    if https:
+        app.run(host="0.0.0.0", port=port, ssl_context='adhoc')
+    else:
+        app.run(host="0.0.0.0", port=port)
 
 if __name__ == "__main__":
     sys.exit(main())

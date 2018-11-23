@@ -10,6 +10,8 @@ sudo pip3 install flasgger
 
 sudo apt-get install mosquitto
 
+sudo pip3 install pyopenssl
+
 A MQTT broker is necessary: mosquitto
 
 Website url for flasgger(rest api): http://127.0.0.1/
