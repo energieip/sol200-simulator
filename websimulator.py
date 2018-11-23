@@ -32,9 +32,12 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-b", "--broker",  type=str, default="127.0.0.1",
                         help="Broker ip address by default 127.0.0.1")
+    parser.add_argument("-p", "--port",  type=str, default="80",
+                        help="web port by default 80")
     args = parser.parse_args()
     logger.info("Broker address is %r", args.broker)
     broker_address = args.broker
+    port = args.port
 
     logger.info("EnergieIP Simulator")
 
@@ -452,7 +455,7 @@ def main():
         diag = switch.get_diagnostic()
         return jsonify(config=diag["config"], events=diag['events']), HTTPStatus.OK
 
-    app.run(host="0.0.0.0")
+    app.run(host="0.0.0.0", port=port)
 
 if __name__ == "__main__":
     sys.exit(main())
