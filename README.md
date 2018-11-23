@@ -12,8 +12,10 @@ sudo apt-get install mosquitto
 
 A MQTT broker is necessary: mosquitto
 
-Website url for flasgger(rest api): http://127.0.0.1:5000/
+Website url for flasgger(rest api): http://127.0.0.1/
 
 When you install it, on your pc, please specifiy the broker address. By default, it will be 127.0.0.1
 
 To execute it: ./websimulator.py
+
+To Get the manual: ./websimulator.py -h
